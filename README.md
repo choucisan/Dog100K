@@ -1,55 +1,134 @@
-# Dog100K 数据集
+---
+language:
+  - en
+task_categories:
+  - text-to-image
+  - image-to-text
+  - image-text-to-text
+tags:
+  - dog
+  - multimodal
+  - vision-language
+  - contrastive-learning
+---
 
-Dog100K 是目前全网最大规模的高质量狗狗图文对齐数据集，包含超过 100,000 对图像与对应文本描述，专为图文检索、多模态学习、生成模型等任务设计。
+# Dog100K
 
 <p align="center">
-  <img src="1.png" alt="Dog100K 示例" width="1000"/>
+  <img src="images/Dog100K.jpeg" alt="Dog100K" width="800"/>
 </p>
 
----
+<p align="center">
+  <a href="https://github.com/choucisan/Dog100K"><img src="https://img.shields.io/badge/GitHub-Dog100K-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+  <a href="https://huggingface.co/datasets/choucsan/Dog100K"><img src="https://img.shields.io/badge/%F0%9F%A4%97_HuggingFace-Dataset-yellow?style=for-the-badge" alt="Hugging Face"></a>
+  <a href="https://your-blog-link.com"><img src="https://img.shields.io/badge/Blog-Post-blue?style=for-the-badge" alt="Blog"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a>
+</p>
 
-🐶 **数据集亮点**
-
-- 规模庞大：超过 10 万对图像与文本，覆盖丰富的狗狗品种、动作姿态和拍摄场景。  
-- 标注精细：每张图片均配有自然语言描述，具备高准确性和丰富语义信息。  
-- 多样性强：涵盖多种光照条件、背景类型和视角，增强模型泛化能力。  
-- 开源共享：开放使用，支持学术研究和工业应用，推动跨模态 AI 发展。  
-
----
-
-📂 **数据结构**
-
-- `data/`  
-  存放所有狗狗图像，命名格式为 `00000xxxx.jpg`。  
-
-- `captions.csv`  
-  图文对的索引文件，包含两列：  
-  - `filename`：图像文件名  
-  - `caption`：对应的文本描述  
+**Dog100K** is one of the largest high-quality dog image-text alignment datasets, containing over **100,000** image-text pairs. It is designed for image-text retrieval, multimodal learning, and conditional image generation tasks.
 
 ---
 
-🚀 **典型应用场景**
+## Pipeline
 
-- **图文检索**（Image-Text Retrieval）  
-  利用图像和文本的对应关系进行高效搜索。  
+<p align="center">
+  <img src="images/dog100kpipeline.png" alt="Dog100K Pipeline" width="800"/>
+</p>
 
-- **图像描述生成**（Image Captioning）  
-  自动生成自然语言描述，提升图像理解。  
+The dataset is constructed through a multi-stage pipeline:
 
-- **条件图像生成**  
-  使用 DiT、Stable Diffusion、CogView3 等模型，基于文本生成逼真狗狗图像。  
+1. **Data Collection**: Dog images are gathered from diverse sources to ensure broad coverage of breeds, scenes, and poses.
+2. **Quality Filtering**: Images are filtered for resolution, relevance, and diversity to remove low-quality samples.
+3. **Annotation**: Each image is annotated with fine-grained natural language descriptions, including breed, action, scene, and whether humans or multiple dogs are present.
+4. **Validation**: Annotations are reviewed and validated for accuracy and consistency.
 
-- **多模态对比学习与跨模态理解**  
-  适用于 Contrastive Learning、CLIP、BLIP 等框架，实现视觉与语言的深度融合。  
+---
+
+## Dataset Overview
+
+- **Total Samples**: 103,508 image-text pairs
+- **Image Format**: JPEG, stored in `data/` directory
+- **Annotation Format**: JSONL (`Dog100K.jsonl`), one JSON object per line
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `filename` | string | Image filename (e.g., `00000001.jpg`) |
+| `has_human` | bool | Whether a human is present in the image |
+| `multiple_dogs` | bool | Whether multiple dogs appear in the image |
+| `scene` | string | Brief scene description |
+| `description` | string | Detailed natural language description |
+
+**Example:**
+```json
+{
+  "filename": "00000001.jpg",
+  "has_human": false,
+  "multiple_dogs": false,
+  "scene": "bed with colorful blanket",
+  "description": "A small dog with light-colored fur is sitting on a colorful blanket, wearing a light blue shirt. The dog has its mouth open and ears perked up, appearing alert and happy."
+}
+```
 
 ---
 
-🔗 **数据集获取**
+## Highlights
 
-- **下载地址**（夸克网盘）：  
-  👉 [点击这里下载](https://pan.quark.cn/s/847c986bb883)  
+- **Large Scale**: 103,508 image-text pairs covering diverse dog breeds, poses, and scenes.
+- **Fine-grained Annotations**: Each image is accompanied by a natural language description with rich semantic information.
+- **High Diversity**: Various lighting conditions, backgrounds, and viewpoints to enhance model generalization.
+- **Open Source**: Freely available for academic research and industrial applications.
 
 ---
- 
-联系方式：[choucisan@gmail.com]  
+
+## Quick Start
+
+Load the dataset directly from Hugging Face:
+
+```python
+from datasets import load_dataset
+
+# Load from Hugging Face Hub
+dataset = load_dataset("choucsan/Dog100K", split="train")
+
+# Access a sample
+sample = dataset[0]
+print(sample["description"])
+image = sample["image"]  # PIL Image object
+image.show()
+```
+
+Or load locally:
+
+```python
+import json
+from PIL import Image
+
+with open("Dog100K.jsonl", "r") as f:
+    samples = [json.loads(line) for line in f]
+
+sample = samples[0]
+img = Image.open(f"data/{sample['filename']}")
+print(sample["description"])
+```
+
+---
+
+## Applications
+
+- **Image-Text Retrieval**: Cross-modal search using image-text correspondence.
+- **Image Captioning**: Automatic natural language description generation.
+- **Conditional Image Generation**: Text-to-image synthesis with DiT, Stable Diffusion, CogView3, etc.
+- **Multimodal Contrastive Learning**: Visual-language fusion for CLIP, BLIP, and similar frameworks.
+
+---
+
+## Download
+
+- **Hugging Face**: [datasets/choucsan/Dog100K](https://huggingface.co/datasets/choucsan/Dog100K)
+- **Quark Netdisk**: [Download Link](https://pan.quark.cn/s/847c986bb883)
+
+---
+
+## Contact
+
+[choucisan@gmail.com](mailto:choucisan@gmail.com)
