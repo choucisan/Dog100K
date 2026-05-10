@@ -68,33 +68,41 @@ The dataset is constructed through a multi-stage pipeline:
 
 ## Quick Start
 
-Load the dataset directly from Hugging Face:
+### Download
+
+Download the dataset from Hugging Face:
 
 ```python
-from datasets import load_dataset
+from huggingface_hub import hf_hub_download
+import zipfile
 
-# Load from Hugging Face Hub
-dataset = load_dataset("choucsan/Dog100K", split="train")
+# Download zip file
+zip_path = hf_hub_download(
+    repo_id="choucsan/Dog100K",
+    filename="Dog100K_data.zip",
+    repo_type="dataset",
+)
 
-# Access a sample
-sample = dataset[0]
-print(sample["description"])
-image = sample["image"]  # PIL Image object
-image.show()
+# Extract
+with zipfile.ZipFile(zip_path, 'r') as z:
+    z.extractall("Dog100K")
 ```
 
-Or load locally:
+### Load Data
 
 ```python
 import json
 from PIL import Image
 
-with open("Dog100K.jsonl", "r") as f:
+# Load annotations
+with open("Dog100K/Dog100K.jsonl", "r") as f:
     samples = [json.loads(line) for line in f]
 
+# Load an image
 sample = samples[0]
-img = Image.open(f"data/{sample['filename']}")
+img = Image.open(f"Dog100K/data/{sample['filename']}")
 print(sample["description"])
+img.show()
 ```
 
 ---
